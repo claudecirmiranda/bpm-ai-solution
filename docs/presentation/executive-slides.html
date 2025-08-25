@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BPM Solution with AI - Executive Presentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow: hidden;
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide {
+            width: 90%;
+            max-width: 1200px;
+            height: 90%;
+            background: white;
+            border-radius: 20px;
+            padding: 60px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            display: none;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: block;
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-header {
+            text-align: center;
+            margin-bottom: 50px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 30px;
+        }
+
+        .slide-number {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+        }
+
+        h1 {
+            font-size: 3em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 2.5em;
+            color: #667eea;
+            margin-bottom: 30px;
+        }
+
+        h3 {
+            font-size: 1.8em;
+            color: #34495e;
+            margin-bottom: 20px;
+        }
+
+        .slide-content {
+            font-size: 1.2em;
+            line-height: 1.8;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .three-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .metric-card {
+            background: #f8f9fa;
+            border-left: 5px solid #27ae60;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .metric-value {
+            font-size: 3em;
+            font-weight: bold;
+            color: #27ae60;
+            display: block;
+        }
+
+        .metric-label {
+            font-size: 1.1em;
+            color: #7f8c8d;
+            margin-top: 10px;
+        }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .pros, .cons {
+            padding: 25px;
+            border-radius: 15px;
+        }
+
+        .pros {
+            background: #d5f4e6;
+            border-left: 5px solid #27ae60;
+        }
+
+        .cons {
+            background: #fdeaea;
+            border-left: 5px solid #e74c3c;
+        }
+
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #667eea;
+            z-index: 1;
+        }
+
+        .timeline-item {
+            background: white;
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            z-index: 2;
+            position: relative;
+            width: 200px;
+        }
+
+        .timeline-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .nav-controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.9);
+            border: none;
+            padding: 15px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .nav-btn:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .slide-indicator {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .indicator-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .indicator-dot.active {
+            background: white;
+            transform: scale(1.3);
+        }
+
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .tech-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s;
+        }
+
+        .tech-item:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+        }
+
+        .architecture-diagram {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .service-box {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            margin: 10px;
+            font-weight: bold;
+        }
+
+        .ai-agent {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+
+        .core-service {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+
+        .data-service {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+
+        .risk-matrix {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .risk-item {
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .risk-low {
+            background: #d5f4e6;
+            border-left: 5px solid #27ae60;
+        }
+
+        .risk-medium {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+        }
+
+        .risk-high {
+            background: #fdeaea;
+            border-left: 5px solid #e74c3c;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .comparison-table th {
+            background: #667eea;
+            color: white;
+            padding: 20px;
+            font-size: 1.1em;
+        }
+
+        .comparison-table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .checkmark {
+            color: #27ae60;
+            font-size: 1.5em;
+        }
+
+        .cross {
+            color: #e74c3c;
+            font-size: 1.5em;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Slide 1: Título -->
+        <div class="slide active">
+            <div class="slide-number">1/8</div>
+            <div class="slide-header">
+                <h1>🚀 Solução BPM Interna</h1>
+                <h2 style="color: #764ba2;">Acelerada por Inteligência Artificial</h2>
+            </div>
+            <div class="slide-content" style="text-align: center;">
+                <div class="highlight-box" style="font-size: 1.3em;">
+                    <strong>Transformando processos de negócio com tecnologia de ponta</strong>
+                    <br><br>
+                    Substituição da SoftExpert Suite por solução proprietária<br>
+                    com agentes de IA especializados
+                </div>
+                <div style="margin-top: 40px; font-size: 1.1em; color: #7f8c8d;">
+                    📅 Data: Agosto 2025<br>
+                    👨‍💼 Apresentação para: CIO e Stakeholders<br>
+                    🎯 Objetivo: Aprovação para desenvolvimento
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Situação Atual -->
+        <div class="slide">
+            <div class="slide-number">2/8</div>
+            <div class="slide-header">
+                <h2>📊 Situação Atual vs. Oportunidade</h2>
+            </div>
+            <div class="slide-content">
+                <div class="two-column">
+                    <div>
+                        <h3 style="color: #e74c3c;">🔴 Desafios Atuais</h3>
+                        <div class="cons">
+                            <ul style="list-style: none; padding: 0;">
+                                <li>❌ Alto custo de licenciamento anual</li>
+                                <li>❌ Limitações de customização</li>
+                                <li>❌ Dependência de fornecedor externo</li>
+                                <li>❌ Time-to-market lento para mudanças</li>
+                                <li>❌ Vendor lock-in</li>
+                                <li>❌ Integrações complexas e custosas</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 style="color: #27ae60;">🟢 Oportunidade com IA</h3>
+                        <div class="pros">
+                            <ul style="list-style: none; padding: 0;">
+                                <li>✅ Redução significativa do TCO</li>
+                                <li>✅ Customizações ilimitadas</li>
+                                <li>✅ Controle total do roadmap</li>
+                                <li>✅ Desenvolvimento 60-80% mais rápido</li>
+                                <li>✅ Tecnologia de ponta</li>
+                                <li>✅ Capacitação interna da equipe</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="highlight-box" style="margin-top: 30px; text-align: center;">
+                    <strong>💡 Momento ideal para modernização:</strong> IA generativa amadureceu e pode acelerar drasticamente o desenvolvimento
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Arquitetura da Solução -->
+        <div class="slide">
+            <div class="slide-number">3/8</div>
+            <div class="slide-header">
+                <h2>🏗️ Arquitetura da Solução</h2>
+            </div>
+            <div class="slide-content">
+                <div class="architecture-diagram">
+                    <h3>Frontend Layer</h3>
+                    <div class="service-box">Vue.js 3 + TypeScript</div>
+                    <div class="service-box">BPMN Editor</div>
+                    <div class="service-box">Form Builder</div>
+                    
+                    <h3 style="margin-top: 30px;">AI Agents Layer</h3>
+                    <div class="service-box ai-agent">Process Designer</div>
+                    <div class="service-box ai-agent">Form Builder</div>
+                    <div class="service-box ai-agent">Code Generator</div>
+                    <div class="service-box ai-agent">Validator</div>
+                    
+                    <h3 style="margin-top: 30px;">Microservices Layer</h3>
+                    <div class="service-box core-service">Process Engine</div>
+                    <div class="service-box core-service">User Management</div>
+                    <div class="service-box core-service">Notification Service</div>
+                    <div class="service-box core-service">Analytics Service</div>
+                    
+                    <h3 style="margin-top: 30px;">Data Layer</h3>
+                    <div class="service-box data-service">PostgreSQL</div>
+                    <div class="service-box data-service">Redis Cache</div>
+                    <div class="service-box data-service">File Storage</div>
+                </div>
+                
+                <div class="tech-stack">
+                    <div class="tech-item">
+                        <strong>Backend</strong><br>
+                        Python + FastAPI<br>
+                        Node.js (específicos)
+                    </div>
+                    <div class="tech-item">
+                        <strong>IA</strong><br>
+                        LangChain + CrewAI<br>
+                        Claude + GPT-4
+                    </div>
+                    <div class="tech-item">
+                        <strong>Deploy</strong><br>
+                        Kubernetes<br>
+                        Docker + CI/CD
+                    </div>
+                    <div class="tech-item">
+                        <strong>Observability</strong><br>
+                        Prometheus + Grafana<br>
+                        ELK Stack
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: ROI e Métricas -->
+        <div class="slide">
+            <div class="slide-number">4/8</div>
+            <div class="slide-header">
+                <h2>💰 ROI e Métricas Financeiras</h2>
+            </div>
+            <div class="slide-content">
+                <div class="three-column">
+                    <div class="metric-card">
+                        <span class="metric-value">R$ 380k</span>
+                        <div class="metric-label">Economia Anual Estimada</div>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-value">8.5</span>
+                        <div class="metric-label">Payback (meses)</div>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-value">65%</span>
+                        <div class="metric-label">Redução TCO 3 anos</div>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 40px;">📊 Comparativo de Custos (3 anos)</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Categoria</th>
+                            <th>SoftExpert Suite</th>
+                            <th>Solução Interna</th>
+                            <th>Economia</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Licenciamento</strong></td>
+                            <td>R$ 1.440.000</td>
+                            <td>R$ 0</td>
+                            <td style="color: #27ae60;"><strong>R$ 1.440.000</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Desenvolvimento</strong></td>
+                            <td>R$ 0</td>
+                            <td>R$ 231.000</td>
+                            <td style="color: #e74c3c;">-R$ 231.000</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Infraestrutura</strong></td>
+                            <td>R$ 180.000</td>
+                            <td>R$ 45.000</td>
+                            <td style="color: #27ae60;"><strong>R$ 135.000</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Manutenção</strong></td>
+                            <td>R$ 432.000</td>
+                            <td>R$ 138.600</td>
+                            <td style="color: #27ae60;"><strong>R$ 293.400</strong></td>
+                        </tr>
+                        <tr style="background: #667eea; color: white; font-weight: bold;">
+                            <td><strong>TOTAL</strong></td>
+                            <td>R$ 2.052.000</td>
+                            <td>R$ 414.600</td>
+                            <td><strong>R$ 1.637.400</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="highlight-box" style="text-align: center; margin-top: 30px;">
+                    <strong>🎯 ROI de 395% em 3 anos</strong><br>
+                    Economia líquida de R$ 1.6M + benefícios intangíveis
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Roadmap -->
+        <div class="slide">
+            <div class="slide-number">5/8</div>
+            <div class="slide-header">
+                <h2>🗓️ Roadmap de Implementação</h2>
+            </div>
+            <div class="slide-content">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <h4>Fase 1: POC</h4>
+                        <p><strong>3 semanas</strong></p>
+                        <p>Process Designer Agent<br>Editor BPMN básico<br>Form Builder MVP</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>Fase 2: Core</h4>
+                        <p><strong>8 semanas</strong></p>
+                        <p>Workflow Engine<br>APIs completas<br>Sistema aprovação</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>Fase 3: Produção</h4>
+                        <p><strong>4 semanas</strong></p>
+                        <p>Migração processos<br>Treinamento users<br>Go-live</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>Fase 4: Evolução</h4>
+                        <p><strong>Contínua</strong></p>
+                        <p>Novos agentes IA<br>ML avançado<br>Otimizações</p>
+                    </div>
+                </div>
+
+                <h3>🎯 Marcos Principais</h3>
+                <div class="two-column">
+                    <div>
+                        <h4 style="color: #667eea;">Semana 3:</h4>
+                        <ul>
+                            <li>Demo funcional do POC</li>
+                            <li>Validação com usuários-chave</li>
+                            <li>Aprovação para próxima fase</li>
+                        </ul>
+
+                        <h4 style="color: #667eea; margin-top: 20px;">Semana 11:</h4>
+                        <ul>
+                            <li>Sistema piloto em homologação</li>
+                            <li>Testes de carga e performance</li>
+                            <li>Aprovação de usuários</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: #667eea;">Semana 15:</h4>
+                        <ul>
+                            <li>Go-live em produção</li>
+                            <li>Processos críticos migrados</li>
+                            <li>Equipe treinada</li>
+                        </ul>
+
+                        <h4 style="color: #667eea; margin-top: 20px;">Mês 6:</h4>
+                        <ul>
+                            <li>100% dos processos migrados</li>
+                            <li>ROI positivo alcançado</li>
+                            <li>Roadmap de melhorias definido</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Análise de Riscos -->
+        <div class="slide">
+            <div class="slide-number">6/8</div>
+            <div class="slide-header">
+                <h2>⚠️ Análise de Riscos e Mitigações</h2>
+            </div>
+            <div class="slide-content">
+                <div class="risk-matrix">
+                    <div class="risk-item risk-low">
+                        <h4>🟢 Baixo Risco</h4>
+                        <strong>Aceitação dos Usuários</strong>
+                        <p>Interface moderna e intuitiva + treinamento adequado</p>
+                    </div>
+                    <div class="risk-item risk-medium">
+                        <h4>🟡 Médio Risco</h4>
+                        <strong>Complexidade Técnica</strong>
+                        <p>POC incremental + equipe experiente + mentoria especializada</p>
+                    </div>
+                    <div class="risk-item risk-medium">
+                        <h4>🟡 Médio Risco</h4>
+                        <strong>Performance da IA</strong>
+                        <p>Multiple LLMs + fallback manual + validação humana</p>
+                    </div>
+                </div>
+
+                <h3>🛡️ Estratégias de Mitigação</h3>
+                <div class="two-column">
+                    <div class="highlight-box">
+                        <h4>Técnicas</h4>
+                        <ul>
+                            <li><strong>Desenvolvimento Incremental:</strong> Fases pequenas e validação constante</li>
+                            <li><strong>Arquitetura Resiliente:</strong> Microservices + circuit breakers</li>
+                            <li><strong>Testes Automatizados:</strong> >80% cobertura + CI/CD</li>
+                            <li><strong>Rollback Plan:</strong> Blue-green deployment</li>
+                        </ul>
+                    </div>
+                    <div class="highlight-box">
+                        <h4>Organizacionais</h4>
+                        <ul>
+                            <li><strong>Change Management:</strong> Comunicação transparente</li>
+                            <li><strong>Training Program:</strong> Capacitação progressiva</li>
+                            <li><strong>Support Team:</strong> Squad dedicado pós go-live</li>
+                            <li><strong>Feedback Loop:</strong> Melhorias contínuas</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="background: #fff3cd; padding: 20px; border-radius: 10px; margin-top: 30px; border-left: 5px solid #ffc107;">
+                    <strong>⚡ Plano de Contingência:</strong> Em caso de problemas críticos, mantemos SoftExpert em paralelo durante os primeiros 3 meses
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Benefícios Estratégicos -->
+        <div class="slide">
+            <div class="slide-number">7/8</div>
+            <div class="slide-header">
+                <h2>🎯 Benefícios Estratégicos</h2>
+            </div>
+            <div class="slide-content">
+                <div class="two-column">
+                    <div>
+                        <h3 style="color: #27ae60;">💰 Benefícios Financeiros</h3>
+                        <ul style="font-size: 1.1em; line-height: 2;">
+                            <li>Economia de R$ 1.6M em 3 anos</li>
+                            <li>ROI de 395% no período</li>
+                            <li>Eliminação de vendor lock-in</li>
+                            <li>Redução de custos de integração</li>
+                            <li>Flexibilidade orçamentária</li>
+                        </ul>
+
+                        <h3 style="color: #3498db; margin-top: 30px;">🚀 Benefícios Operacionais</h3>
+                        <ul style="font-size: 1.1em; line-height: 2;">
+                            <li>Time-to-market 3x mais rápido</li>
+                            <li>Customizações ilimitadas</li>
+                            <li>Performance otimizada</li>
+                            <li>Integração nativa com sistemas</li>
+                            <li>Dashboard inteligente</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="color: #9b59b6;">🧠 Benefícios Tecnológicos</h3>
+                        <ul style="font-size: 1.1em; line-height: 2;">
+                            <li>Capacitação em IA/ML</li>
+                            <li>Stack moderno e escalável</li>
+                            <li>Controle total do código</li>
+                            <li>Inovação contínua</li>
+                            <li>Diferencial competitivo</li>
+                        </ul>
+
+                        <h3 style="color: #e67e22; margin-top: 30px;">👥 Benefícios Organizacionais</h3>
+                        <ul style="font-size: 1.1em; line-height: 2;">
+                            <li>Equipe upskillada</li>
+                            <li>Cultura de inovação</li>
+                            <li>Autonomia tecnológica</li>
+                            <li>Atração de talentos</li>
+                            <li>Marca tech empregadora</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="highlight-box" style="text-align: center; margin-top: 40px; font-size: 1.3em;">
+                    <strong>🌟 Impacto Transformacional</strong><br>
+                    Não é apenas substituir uma ferramenta - é modernizar nossa stack tecnológica<br>
+                    e posicionar a empresa na vanguarda da automação inteligente
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Próximos Passos -->
+        <div class="slide">
+            <div class="slide-number">8/8</div>
+            <div class="slide-header">
+                <h2>✅ Próximos Passos</h2>
+            </div>
+            <div class="slide-content">
+                <div class="highlight-box" style="text-align: center; margin-bottom: 40px;">
+                    <h3>🎯 Decisão Requerida Hoje</h3>
+                    <p style="font-size: 1.2em; margin: 20px 0;">
+                        Aprovação para iniciar <strong>Fase 1 (POC)</strong> - Investimento de R$ 42.000
+                    </p>
+                </div>
+
+                <div class="two-column">
+                    <div>
+                        <h3 style="color: #667eea;">📅 Esta Semana</h3>
+                        <div class="metric-card" style="text-align: left;">
+                            <ul>
+                                <li>✅ Setup da equipe do projeto</li>
+                                <li>✅ Aprovação de orçamento</li>
+                                <li>✅ Definição de escopo detalhado</li>
+                                <li>✅ Setup da infraestrutura inicial</li>
+                                <li>✅ Kickoff oficial do projeto</li>
+                            </ul>
+                        </div>
+
+                        <h3 style="color: #27ae60; margin-top: 30px;">🗓️ Próximas 3 Semanas</h3>
+                        <div class="metric-card" style="text-align: left;">
+                            <ul>
+                                <li>🔄 Desenvolvimento do POC</li>
+                                <li>🔄 Process Designer Agent funcional</li>
+                                <li>🔄 Editor BPMN integrado</li>
+                                <li>🔄 Validação com usuários-chave</li>
+                                <li>🎯 Demo executiva (resultado)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 style="color: #e74c3c;">⚡ Fatores de Urgência</h3>
+                        <div style="background: #fdeaea; padding: 20px; border-radius: 10px; border-left: 5px solid #e74c3c;">
+                            <ul>
+                                <li><strong>Renovação SoftExpert:</strong> Evitar novo ciclo de licenciamento</li>
+                                <li><strong>Maturidade da IA:</strong> Momento ideal para adoção</li>
+                                <li><strong>Equipe disponível:</strong> Janela de alocação de recursos</li>
+                                <li><strong>Mercado competitivo:</strong> Diferencial tecnológico</li>
+                            </ul>
+                        </div>
+
+                        <h3 style="color: #f39c12; margin-top: 30px;">📞 Suporte Necessário</h3>
+                        <div style="background: #fff3cd; padding: 20px; border-radius: 10px; border-left: 5px solid #ffc107;">
+                            <ul>
+                                <li><strong>Sponsor Executivo:</strong> CIO como champion</li>
+                                <li><strong>Usuários-chave:</strong> Validação e feedback</li>
+                                <li><strong>IT Operations:</strong> Infraestrutura e deploy</li>
+                                <li><strong>Change Management:</strong> Comunicação</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="highlight-box" style="text-align: center; margin-top: 40px; font-size: 1.4em;">
+                    <strong>🚀 Ready to Transform?</strong><br>
+                    Vamos revolucionar nossos processos com IA e conquistar autonomia tecnológica
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="slide-indicator">
+        <div class="indicator-dot active" onclick="goToSlide(0)"></div>
+        <div class="indicator-dot" onclick="goToSlide(1)"></div>
+        <div class="indicator-dot" onclick="goToSlide(2)"></div>
+        <div class="indicator-dot" onclick="goToSlide(3)"></div>
+        <div class="indicator-dot" onclick="goToSlide(4)"></div>
+        <div class="indicator-dot" onclick="goToSlide(5)"></div>
+        <div class="indicator-dot" onclick="goToSlide(6)"></div>
+        <div class="indicator-dot" onclick="goToSlide(7)"></div>
+    </div>
+
+    <div class="nav-controls">
+        <button class="nav-btn" onclick="previousSlide()">⬅️ Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Próximo ➡️</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const indicators = document.querySelectorAll('.indicator-dot');
+        const totalSlides = slides.length;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            indicators[currentSlide].classList.remove('active');
+            
+            currentSlide = (n + totalSlides) % totalSlides;
+            
+            slides[currentSlide].classList.add('active');
+            indicators[currentSlide].classList.add('active');
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function previousSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        function goToSlide(n) {
+            showSlide(n);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                previousSlide();
+            }
+        });
+
+        // Auto-advance (opcional)
+        // setInterval(nextSlide, 10000); // Advance every 10 seconds
+    </script>
+</body>
+</html>

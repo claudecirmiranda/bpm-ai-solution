@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora ROI - Solução BPM Interna</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+        
+        .input-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .results-section {
+            background: #fff5f5;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid #e53e3e;
+        }
+        
+        .section-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #34495e;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .result-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-left: 4px solid #27ae60;
+        }
+        
+        .result-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 5px;
+        }
+        
+        .result-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .benefits-list {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .benefits-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .benefits-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #d4edda;
+        }
+        
+        .benefits-list li:before {
+            content: "✅ ";
+            margin-right: 10px;
+        }
+        
+        .assumptions {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .assumptions h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .assumptions ul {
+            margin-left: 20px;
+            color: #856404;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Calculadora ROI</h1>
+            <p>Solução BPM Interna com Aceleração por IA</p>
+        </div>
+        
+        <div class="content">
+            <div class="input-section">
+                <h2 class="section-title">📊 Parâmetros de Entrada</h2>
+                
+                <div class="input-group">
+                    <label>Custo Anual SoftExpert (R$)</label>
+                    <input type="number" id="softexpertCost" value="480000" onchange="calculateROI()">
+                </div>
+                
+                <div class="input-group">
+                    <label>Número de Usuários</label>
+                    <input type="number" id="users" value="150" onchange="calculateROI()">
+                </div>
+                
+                <div class="input-group">
+                    <label>Processos Ativos por Mês</label>
+                    <input type="number" id="monthlyProcesses" value="2500" onchange="calculateROI()">
+                </div>
+                
+                <div class="input-group">
+                    <label>Horas de Desenvolvimento/Mês (sem IA)</label>
+                    <input type="number" id="devHoursWithoutAI" value="160" onchange="calculateROI()">
+                </div>
+                
+                <div class="input-group">
+                    <label>Custo Hora Desenvolvedor (R$)</label>
+                    <input type="number" id="devHourCost" value="150" onchange="calculateROI()">
+                </div>
+                
+                <div class="input-group">
+                    <label>Aceleração esperada com IA (%)</label>
+                    <input type="number" id="aiAcceleration" value="65" onchange="calculateROI()">
+                </div>
+                
+                <div class="input-group">
+                    <label>Custo Mensal Infraestrutura + IA (R$)</label>
+                    <input type="number" id="infraCost" value="8000" onchange="calculateROI()">
+                </div>
+            </div>
+            
+            <div class="results-section">
+                <h2 class="section-title">💰 Resultados Financeiros</h2>
+                
+                <div class="result-card">
+                    <div class="result-value" id="annualSavings">R$ 0</div>
+                    <div class="result-label">Economia Anual Total</div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="result-value" id="monthlyROI">0%</div>
+                    <div class="result-label">ROI Mensal</div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="result-value" id="paybackTime">0</div>
+                    <div class="result-label">Payback (meses)</div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="result-value" id="threeYearSaving">R$ 0</div>
+                    <div class="result-label">Economia em 3 Anos</div>
+                </div>
+                
+                <div class="benefits-list">
+                    <h4>🎯 Benefícios Adicionais (Não Quantificados)</h4>
+                    <ul>
+                        <li>Controle total sobre roadmap de features</li>
+                        <li>Customizações ilimitadas sem custo extra</li>
+                        <li>Integração nativa com sistemas existentes</li>
+                        <li>Time-to-market 3x mais rápido com IA</li>
+                        <li>Capacitação interna em tecnologias emergentes</li>
+                        <li>Eliminação de vendor lock-in</li>
+                        <li>Dados 100% sob controle da empresa</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="assumptions">
+            <h4>📋 Premissas Utilizadas</h4>
+            <ul>
+                <li>IA acelera desenvolvimento em 65% (baseado em estudos GitHub Copilot)</li>
+                <li>Desenvolvimento inicial: 6 meses com 2 devs full-time</li>
+                <li>Manutenção: 20% do esforço inicial por ano</li>
+                <li>Infraestrutura cloud escalável (AWS/Azure)</li>
+                <li>Custos de IA incluem APIs (GPT-4/Claude) + ferramentas</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(value);
+        }
+
+        function calculateROI() {
+            // Get input values
+            const softexpertCost = parseFloat(document.getElementById('softexpertCost').value) || 0;
+            const users = parseFloat(document.getElementById('users').value) || 0;
+            const monthlyProcesses = parseFloat(document.getElementById('monthlyProcesses').value) || 0;
+            const devHoursWithoutAI = parseFloat(document.getElementById('devHoursWithoutAI').value) || 0;
+            const devHourCost = parseFloat(document.getElementById('devHourCost').value) || 0;
+            const aiAcceleration = parseFloat(document.getElementById('aiAcceleration').value) || 0;
+            const infraCost = parseFloat(document.getElementById('infraCost').value) || 0;
+
+            // Calculate development savings with AI
+            const hoursWithAI = devHoursWithoutAI * (1 - aiAcceleration / 100);
+            const monthlySavingsFromAI = (devHoursWithoutAI - hoursWithAI) * devHourCost;
+            
+            // Calculate total annual savings
+            const annualLicenseSavings = softexpertCost;
+            const annualAISavings = monthlySavingsFromAI * 12;
+            const annualInfraCost = infraCost * 12;
+            
+            // Initial development cost (6 months, 2 devs)
+            const initialDevCost = 6 * 2 * 160 * devHourCost;
+            
+            const totalAnnualSavings = annualLicenseSavings + annualAISavings - annualInfraCost;
+            const threeYearSaving = (totalAnnualSavings * 3) - initialDevCost;
+            
+            // Calculate payback time
+            const paybackMonths = initialDevCost / (totalAnnualSavings / 12);
+            
+            // Calculate monthly ROI after payback
+            const monthlyROI = ((totalAnnualSavings / 12) / initialDevCost) * 100;
+
+            // Update display
+            document.getElementById('annualSavings').textContent = formatCurrency(totalAnnualSavings);
+            document.getElementById('monthlyROI').textContent = monthlyROI.toFixed(1) + '%';
+            document.getElementById('paybackTime').textContent = Math.ceil(paybackMonths) + ' meses';
+            document.getElementById('threeYearSaving').textContent = formatCurrency(threeYearSaving);
+        }
+
+        // Calculate initial values
+        calculateROI();
+    </script>
+</body>
+</html>

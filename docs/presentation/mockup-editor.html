@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor BPMN com IA - Mockup</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f6fa;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .main-container {
+            display: flex;
+            height: calc(100vh - 70px);
+        }
+
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid #e1e8ed;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ai-panel {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 0;
+        }
+
+        .ai-panel h3 {
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .ai-input {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .ai-suggestions {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .suggestion-item {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 12px;
+            margin: 5px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s;
+        }
+
+        .suggestion-item:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .tools-panel {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .tool-category {
+            margin-bottom: 25px;
+        }
+
+        .tool-category h4 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-size: 1em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tool-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .tool-item {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .tool-item:hover {
+            background: #e3f2fd;
+            border-color: #2196f3;
+            transform: translateY(-2px);
+        }
+
+        .tool-item.ai-enhanced::after {
+            content: "✨";
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff6b6b;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .canvas-area {
+            flex: 1;
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .canvas-toolbar {
+            background: #f8f9fa;
+            border-bottom: 1px solid #e1e8ed;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-right: 20px;
+        }
+
+        .toolbar-btn {
+            padding: 8px 12px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .toolbar-btn:hover {
+            background: #e3f2fd;
+            border-color: #2196f3;
+        }
+
+        .canvas {
+            width: 100%;
+            height: calc(100% - 50px);
+            background: 
+                radial-gradient(circle, #e0e0e0 1px, transparent 1px),
+                radial-gradient(circle, #e0e0e0 1px, transparent 1px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            position: relative;
+        }
+
+        .process-element {
+            position: absolute;
+            background: white;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: move;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            min-width: 120px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .process-element:hover {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transform: translateY(-2px);
+        }
+
+        .process-element.start {
+            border-radius: 50px;
+            background: #2ecc71;
+            color: white;
+            border-color: #27ae60;
+        }
+
+        .process-element.task {
+            background: #3498db;
+            color: white;
+        }
+
+        .process-element.gateway {
+            background: #f39c12;
+            color: white;
+            border-radius: 5px;
+            transform: rotate(45deg);
+        }
+
+        .process-element.gateway .content {
+            transform: rotate(-45deg);
+        }
+
+        .process-element.end {
+            border-radius: 50px;
+            background: #e74c3c;
+            color: white;
+            border-color: #c0392b;
+        }
+
+        .connection-line {
+            position: absolute;
+            background: #2c3e50;
+            height: 2px;
+            transform-origin: left center;
+        }
+
+        .ai-hint {
+            position: absolute;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            animation: pulse 2s infinite;
+            cursor: pointer;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .properties-panel {
+            width: 320px;
+            background: white;
+            border-left: 1px solid #e1e8ed;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .properties-panel h3 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .property-group {
+            margin-bottom: 20px;
+        }
+
+        .property-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        .property-group input, .property-group select, .property-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .ai-form-builder {
+            background: #f0f7ff;
+            border: 2px dashed #3498db;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .minimap {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 200px;
+            height: 120px;
+            background: rgba(255,255,255,0.95);
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">🚀 BPM Studio AI</div>
+        <div class="user-info">
+            <span>Processo: Aprovação de Compras</span>
+            <button class="toolbar-btn">Salvar</button>
+            <button class="toolbar-btn">Publicar</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="ai-panel">
+                <h3>🤖 Assistente IA</h3>
+                <input type="text" class="ai-input" placeholder="Descreva o processo que deseja criar...">
+                
+                <div class="ai-suggestions">
+                    <h4 style="margin-bottom: 10px; font-size: 0.9em;">Sugestões Inteligentes:</h4>
+                    <div class="suggestion-item">+ Adicionar aprovação do gestor</div>
+                    <div class="suggestion-item">+ Incluir notificação por email</div>
+                    <div class="suggestion-item">+ Definir prazo de 3 dias</div>
+                    <div class="suggestion-item">+ Gateway para valores > R$ 5k</div>
+                </div>
+                
+                <button class="generate-btn">✨ Gerar Processo</button>
+            </div>
+
+            <div class="tools-panel">
+                <div class="tool-category">
+                    <h4>Eventos</h4>
+                    <div class="tool-grid">
+                        <div class="tool-item ai-enhanced" draggable="true">
+                            <div>🎯 Início</div>
+                        </div>
+                        <div class="tool-item ai-enhanced" draggable="true">
+                            <div>🏁 Fim</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tool-category">
+                    <h4>Atividades</h4>
+                    <div class="tool-grid">
+                        <div class="tool-item ai-enhanced" draggable="true">
+                            <div>📋 Tarefa</div>
+                        </div>
+                        <div class="tool-item ai-enhanced" draggable="true">
+                            <div>👤 Usuário</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tool-category">
+                    <h4>Gateways</h4>
+                    <div class="tool-grid">
+                        <div class="tool-item ai-enhanced" draggable="true">
+                            <div>◊ Decisão</div>
+                        </div>
+                        <div class="tool-item ai-enhanced" draggable="true">
+                            <div>◊ Paralelo</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="canvas-area">
+            <div class="canvas-toolbar">
+                <div class="toolbar-group">
+                    <button class="toolbar-btn">↶ Desfazer</button>
+                    <button class="toolbar-btn">↷ Refazer</button>
+                </div>
+                <div class="toolbar-group">
+                    <button class="toolbar-btn">🔍 Zoom In</button>
+                    <button class="toolbar-btn">🔍 Zoom Out</button>
+                    <button class="toolbar-btn">📐 Ajustar</button>
+                </div>
+                <div class="toolbar-group">
+                    <button class="toolbar-btn">✅ Validar</button>
+                    <button class="toolbar-btn">🎮 Simular</button>
+                </div>
+            </div>
+
+            <div class="canvas" id="canvas">
+                <!-- Elementos do processo -->
+                <div class="process-element start" style="left: 50px; top: 150px;">
+                    <div>Início</div>
+                </div>
+
+                <div class="process-element task" style="left: 200px; top: 150px;">
+                    <div>Preencher<br>Formulário</div>
+                </div>
+
+                <div class="process-element gateway" style="left: 380px; top: 150px;">
+                    <div class="content">Valor<br>> R$ 5k?</div>
+                </div>
+
+                <div class="process-element task" style="left: 520px; top: 80px;">
+                    <div>Aprovação<br>Gestor</div>
+                </div>
+
+                <div class="process-element task" style="left: 520px; top: 220px;">
+                    <div>Aprovação<br>Direta</div>
+                </div>
+
+                <div class="process-element end" style="left: 680px; top: 150px;">
+                    <div>Fim</div>
+                </div>
+
+                <!-- Linhas de conexão -->
+                <div class="connection-line" style="left: 120px; top: 165px; width: 80px;"></div>
+                <div class="connection-line" style="left: 320px; top: 165px; width: 60px;"></div>
+                <div class="connection-line" style="left: 425px; top: 165px; width: 95px; transform: rotate(-25deg);"></div>
+                <div class="connection-line" style="left: 425px; top: 165px; width: 95px; transform: rotate(25deg);"></div>
+                <div class="connection-line" style="left: 640px; top: 95px; width: 80px; transform: rotate(25deg);"></div>
+                <div class="connection-line" style="left: 640px; top: 235px; width: 80px; transform: rotate(-25deg);"></div>
+
+                <!-- Dicas IA -->
+                <div class="ai-hint" style="left: 200px; top: 100px;">
+                    💡 Sugestão: Adicionar campo "Justificativa"
+                </div>
+
+                <div class="ai-hint" style="left: 520px; top: 300px;">
+                    ⚡ Otimização: Prazo automático de 48h
+                </div>
+            </div>
+
+            <div class="minimap">
+                <div style="padding: 10px; font-size: 0.8em; color: #666;">
+                    <strong>Visão Geral</strong><br>
+                    ▪ 6 elementos<br>
+                    ▪ 2 aprovadores<br>
+                    ▪ 1 gateway<br>
+                    ▪ 100% válido ✅
+                </div>
+            </div>
+        </div>
+
+        <div class="properties-panel">
+            <h3>⚙️ Propriedades</h3>
+            
+            <div class="property-group">
+                <label>Prazo (dias)</label>
+                <input type="number" value="3">
+            </div>
+
+            <div class="property-group">
+                <label>Descrição</label>
+                <textarea rows="3" placeholder="Descreva a atividade...">Solicitante deve preencher formulário com dados da compra e justificativa.</textarea>
+            </div>
+
+            <div class="ai-form-builder">
+                <h4>🤖 Gerador de Formulário IA</h4>
+                <p style="margin: 10px 0; font-size: 0.9em;">Campos detectados automaticamente:</p>
+                <div style="text-align: left; font-size: 0.8em; margin: 10px 0;">
+                    ✅ Valor da compra<br>
+                    ✅ Fornecedor<br>
+                    ✅ Justificativa<br>
+                    ✅ Centro de custo<br>
+                    ✅ Data necessária<br>
+                </div>
+                <button class="generate-btn">✨ Gerar Formulário</button>
+            </div>
+
+            <div class="property-group" style="margin-top: 20px;">
+                <label>Notificações</label>
+                <div style="font-size: 0.9em;">
+                    <label style="font-weight: normal;"><input type="checkbox" checked> Email</label><br>
+                    <label style="font-weight: normal;"><input type="checkbox"> SMS</label><br>
+                    <label style="font-weight: normal;"><input type="checkbox" checked> Dashboard</label>
+                </div>
+            </div>
+
+            <div class="property-group">
+                <label>Escalação Automática</label>
+                <select>
+                    <option>Após 2 dias</option>
+                    <option>Após 1 dia</option>
+                    <option>Após 3 dias</option>
+                    <option>Desabilitada</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulação de interatividade
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animação das dicas IA
+            const hints = document.querySelectorAll('.ai-hint');
+            hints.forEach((hint, index) => {
+                setTimeout(() => {
+                    hint.style.animation = 'pulse 2s infinite';
+                }, index * 1000);
+            });
+
+            // Click nas sugestões
+            document.querySelectorAll('.suggestion-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    this.style.background = 'rgba(255,255,255,0.4)';
+                    setTimeout(() => {
+                        this.style.background = 'rgba(255,255,255,0.2)';
+                    }, 200);
+                });
+            });
+
+            // Drag and drop simulation
+            document.querySelectorAll('.tool-item').forEach(item => {
+                item.addEventListener('dragstart', function(e) {
+                    this.style.opacity = '0.5';
+                });
+                
+                item.addEventListener('dragend', function(e) {
+                    this.style.opacity = '1';
+                });
+            });
+
+            // Canvas drop zone
+            const canvas = document.getElementById('canvas');
+            canvas.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.style.background = 'linear-gradient(45deg, #e3f2fd 25%, transparent 25%), linear-gradient(-45deg, #e3f2fd 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #e3f2fd 75%), linear-gradient(-45deg, transparent 75%, #e3f2fd 75%)';
+                this.style.backgroundSize = '20px 20px';
+            });
+
+            canvas.addEventListener('dragleave', function(e) {
+                this.style.background = 'radial-gradient(circle, #e0e0e0 1px, transparent 1px), radial-gradient(circle, #e0e0e0 1px, transparent 1px)';
+                this.style.backgroundSize = '20px 20px';
+                this.style.backgroundPosition = '0 0, 10px 10px';
+            });
+
+            canvas.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.style.background = 'radial-gradient(circle, #e0e0e0 1px, transparent 1px), radial-gradient(circle, #e0e0e0 1px, transparent 1px)';
+                this.style.backgroundSize = '20px 20px';
+                this.style.backgroundPosition = '0 0, 10px 10px';
+                
+                // Simular adição de novo elemento
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const newElement = document.createElement('div');
+                newElement.className = 'process-element task';
+                newElement.style.left = x + 'px';
+                newElement.style.top = y + 'px';
+                newElement.innerHTML = '<div>Nova<br>Tarefa</div>';
+                this.appendChild(newElement);
+            });
+
+            // Generate button animation
+            document.querySelectorAll('.generate-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const originalText = this.textContent;
+                    this.textContent = '⚡ Gerando...';
+                    this.style.background = 'linear-gradient(135deg, #f39c12, #e67e22)';
+                    
+                    setTimeout(() => {
+                        this.textContent = '✅ Concluído!';
+                        this.style.background = 'linear-gradient(135deg, #27ae60, #2ecc71)';
+                    }, 2000);
+                    
+                    setTimeout(() => {
+                        this.textContent = originalText;
+                        this.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+                    }, 4000);
+                });
+            });
+        });
+    </script>
+</body>
+</html><label>Nome da Tarefa</label>
+                <input type="text" value="Preencher Formulário">
+            </div>
+
+            <div class="property-group">
+                <label>Responsável</label>
+                <select>
+                    <option>Solicitante</option>
+                    <option>Gestor Direto</option>
+                    <option>Aprovador</option>
+                </select>
+            </div>
+
+            <div class="property-group">
