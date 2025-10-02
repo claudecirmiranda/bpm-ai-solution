@@ -61,7 +61,12 @@
     2.  Cria/edita formulários → associa a tickets
         
     3.  Configura workflows e passos → define regras de aprovação
-        
+
+        *   **Criação assistida por IA**: Agent analisa o contexto do formulário e gera automaticamente uma proposta de workflow com passos, aprovações e regras
+        *   **Criação manual**: Usuário pode criar do zero via interface visual (ReactFlow)
+        *   **Modo híbrido**: IA como acelerador - usuário pode aceitar a sugestão completa, usar parcialmente ou ajustar conforme necessário
+        *   **Flexibilidade total**: Mesmo após geração pela IA, todos os passos são editáveis        
+
     4.  Acompanha progresso e histórico do ticket
         
 *   **Consumo de APIs:**
